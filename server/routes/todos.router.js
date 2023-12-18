@@ -16,12 +16,8 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     let newToDo = req.body;
     console.log('Adding newToDo', newToDo);
-    let queryText = `INSERT INTO "todos"
-    ("text")
-    VALUES 
-    ('Build a CRUD app'),
-    ('Make my app look nice');`
-    pool.query(queryText, [newToDo.text])
+    let queryText = `INSERT INTO "todos"("text") VALUES ('${newToDo.text}');`
+    pool.query(queryText, [])
     .then(result => {
         console.log(newToDo)
         res.sendStatus(201);
@@ -32,11 +28,12 @@ router.post('/', (req, res) => {
     })
 });
 
-router.put('/:id', (req, res) => {
+router.put('/update/:id', (req, res) => {
     let toDoId = req.params.id;
     let markComplete = req.body.markComplete;
-    let queryText = `UPDATE "todos" SET "markComplete" = ${markComplete} WHERE "id" = ${toDoId};`
-    pool.query(queryText, [toDoId])
+    console.log('toDo and mark complete: ', toDoId, markComplete)
+    let queryText = `UPDATE "todos" SET "isComplete" = ${markComplete} WHERE "id" = ${toDoId};`
+    pool.query(queryText, [])
     .then(result => {
         res.sendStatus(200);
     })
@@ -51,9 +48,8 @@ router.delete('/:id' , (req, res) => {
     let toDoId = req.params.id;
 
     const queryText = `DELETE FROM "todos" WHERE "id" = ${toDoId};`
-    const queryParams = [toDoId];
 
-    pool.query(queryText, queryParams)
+    pool.query(queryText)
     .then(() => {
         console.log("ToDo Deleted")
         res.sendStatus(200);
